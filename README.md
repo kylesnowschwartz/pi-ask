@@ -1,15 +1,11 @@
 ![pi-ask main image](docs/media/pi-ask-main.png)
 
-# @eko24ive/pi-ask
+# pi-ask
 
-[![npm downloads](https://badgen.net/npm/dm/@eko24ive/pi-ask)](https://www.npmjs.com/package/@eko24ive/pi-ask)
-[![last commit](https://badgen.net/github/last-commit/eko24ive/pi-ask?v=4b6c81e)](https://github.com/eko24ive/pi-ask/commits/main)
-[![stars](https://badgen.net/github/stars/eko24ive/pi-ask)](https://github.com/eko24ive/pi-ask/stargazers)
+> [!NOTE]
+> This is a fork of [`@eko24ive/pi-ask`](https://github.com/eko24ive/pi-ask) by eko24ive, maintained by [kylesnowschwartz](https://github.com/kylesnowschwartz). It follows upstream and adds an idle timeout for unanswered `ask_user` forms. The original work is under the MIT license; see [LICENSE](LICENSE).
 
-> [!IMPORTANT]
-> Contributions are welcome in chill mode: please open an issue and link your fork or branch instead of expecting rapid pull-request reviews.
-
-`@eko24ive/pi-ask` is an ask tool that cares about your answers.
+`pi-ask` is an ask tool that cares about your answers.
 
 It lets an agent pause, ask structured questions in a terminal UI, and continue with normalized answers instead of guessing.
 
@@ -17,30 +13,16 @@ It lets an agent pause, ask structured questions in a terminal UI, and continue 
 
 High-quality video: [demo.mp4](https://github.com/user-attachments/assets/a8503ca9-afcb-4c31-9edc-353b985a0209)
 
-## Contributions: chill mode
-
-This open source project is something I care about, and it genuinely brings me joy to see it help people. That said, I cannot promise rapid reviews or a normal pull-request turnaround.
-
-If you have an idea, bug report, or change, please open an issue. If you already have code, link to your fork or branch with the changes. I will review it carefully when I have time, then either incorporate the forked changes or implement the idea myself.
-
-I value contributions and will do my best to credit the people who help, whether that means a shout-out, a co-authored commit, or another fitting form of attribution.
-
 ## Install
 
 ```bash
-pi install npm:@eko24ive/pi-ask
-```
-
-You can also install from git:
-
-```bash
-pi install git:github.com/eko24ive/pi-ask
+pi install git:github.com/kylesnowschwartz/pi-ask
 ```
 
 Or try it without installing (load once for the current run):
 
 ```bash
-pi -e npm:@eko24ive/pi-ask
+pi -e git:github.com/kylesnowschwartz/pi-ask
 ```
 
 ## Features
@@ -106,7 +88,7 @@ Capture free-form input inline without leaving the flow.
 
 Open ask settings with `?` during the ask flow, or with the `/ask-settings` command from pi.
 
-Keymaps are context-aware and configurable in `~/.pi/agent/extensions/eko24ive-pi-ask.json`.
+Keymaps are context-aware and configurable in `~/.pi/agent/extensions/pi-ask.json`.
 Each action accepts a key string or an array of aliases.
 
 Default contexts:

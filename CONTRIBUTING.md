@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for contributing to `@eko24ive/pi-ask`.
+Thanks for contributing to `pi-ask`, a fork of [`@eko24ive/pi-ask`](https://github.com/eko24ive/pi-ask).
 
 ## Development setup
 
@@ -15,14 +15,6 @@ Run the extension locally:
 ```bash
 pi -e ./src/index.ts
 ```
-
-## Contribution flow: chill mode
-
-This project is open source because I care about it, and it makes me happy when it helps people. I still cannot promise rapid reviews or a traditional pull-request turnaround.
-
-Please open an issue for ideas, bugs, and proposed changes. If you already have code, link to your fork or branch with the change set. I will review it carefully when I have time, then either incorporate the forked changes or implement the idea myself.
-
-I value contributions and will do my best to credit helpful work with a shout-out, a co-authored commit, or another fitting form of attribution.
 
 ## Validation
 

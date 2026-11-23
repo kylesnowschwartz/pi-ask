@@ -1,13 +1,15 @@
 import assert from "node:assert/strict";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 import test from "node:test";
 import { DEFAULT_ASK_CONFIG } from "../src/config/defaults.ts";
 import type { AskConfig } from "../src/config/schema.ts";
 import {
 	AskConfigStore,
+	getAskConfigPath,
 	getAskConfigStore,
+	getLegacyAskConfigPaths,
 	resetAskConfigStore,
 } from "../src/config/store.ts";
 
@@ -32,14 +34,14 @@ async function makeTempPath(name: string): Promise<string> {
 	const root = await import("node:fs/promises").then(({ mkdtemp }) =>
 		mkdtemp(join(tmpdir(), name))
 	);
-	return join(root, "eko24ive-pi-ask.json");
+	return join(root, "pi-ask.json");
 }
 
 test("resetAskConfigStore reloads the global store from disk", async () => {
 	const root = await import("node:fs/promises").then(({ mkdtemp }) =>
 		mkdtemp(join(tmpdir(), "pi-ask-config-reset-"))
 	);
-	const path = join(root, "extensions", "eko24ive-pi-ask.json");
+	const path = join(root, "extensions", "pi-ask.json");
 	await mkdir(dirname(path), { recursive: true });
 	await writeFile(
 		path,
@@ -195,7 +197,7 @@ test("config store reads legacy root config without copying it", async () => {
 	const root = await import("node:fs/promises").then(({ mkdtemp }) =>
 		mkdtemp(join(tmpdir(), "pi-ask-config-legacy-"))
 	);
-	const path = join(root, "extensions", "eko24ive-pi-ask.json");
+	const path = join(root, "extensions", "pi-ask.json");
 	const legacyPath = join(root, "eko24ive-pi-ask.json");
 	await writeFile(
 		legacyPath,
@@ -230,7 +232,7 @@ test("config store leaves legacy root config when extensions config exists", asy
 	const root = await import("node:fs/promises").then(({ mkdtemp }) =>
 		mkdtemp(join(tmpdir(), "pi-ask-config-conflict-"))
 	);
-	const path = join(root, "extensions", "eko24ive-pi-ask.json");
+	const path = join(root, "extensions", "pi-ask.json");
 	const legacyPath = join(root, "eko24ive-pi-ask.json");
 	await mkdir(dirname(path), { recursive: true });
 	await writeFile(
@@ -309,4 +311,14 @@ test("config store falls back only keymaps when configured keymaps are invalid",
 	assert.deepEqual(result.config.keymaps, DEFAULT_ASK_CONFIG.keymaps);
 	assert.match(result.notice?.text ?? "", DEFAULT_KEYMAPS_NOTICE_PATTERN);
 	await rm(dirname(path), { force: true, recursive: true });
+});
+
+test("default config path has the fork name and falls back to upstream paths", () => {
+	assert.equal(basename(getAskConfigPath()), "pi-ask.json");
+	assert.deepEqual(
+		getLegacyAskConfigPaths().map((path) =>
+			relative(dirname(dirname(getAskConfigPath())), path)
+		),
+		[join("extensions", "eko24ive-pi-ask.json"), "eko24ive-pi-ask.json"]
+	);
 });
