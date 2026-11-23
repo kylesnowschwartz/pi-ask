@@ -29,7 +29,7 @@ export function registerAskTool(
 		label: "Ask User",
 		description: ASK_TOOL_DESCRIPTION,
 		promptSnippet:
-			"Clarify ambiguous or preference-sensitive decisions with a short interactive interview before proceeding",
+			"Ask the user a short structured question when a decision that changes the work cannot be settled otherwise",
 		promptGuidelines: [...ASK_TOOL_PROMPT_GUIDELINES],
 		parameters: AskParamsSchema,
 		prepareArguments: (args) => prepareAskParams(args) as AskParams,

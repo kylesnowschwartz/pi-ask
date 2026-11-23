@@ -38,6 +38,8 @@ function registerMockTool() {
 	return {
 		entries,
 		tool: tools[0] as {
+			description: string;
+			promptSnippet: string;
 			execute: (...args: any[]) => Promise<any>;
 			parameters: Record<string, any>;
 			prepareArguments: (args: unknown) => unknown;
@@ -74,8 +76,6 @@ function sampleParams(): AskParams {
 }
 
 test("ask option schema and tool guidance support grounded recommendations", () => {
-	const { tool } = registerMockTool();
-
 	assert.equal(
 		Value.Check(AskOptionSchema, {
 			value: "small",
@@ -86,12 +86,23 @@ test("ask option schema and tool guidance support grounded recommendations", () 
 		true
 	);
 	assert(
-		tool.promptGuidelines.some(
-			(guideline) =>
-				guideline.includes("grounded preferences") &&
-				guideline.includes("description")
-		)
+		(
+			AskOptionSchema.properties.recommended as unknown as {
+				description: string;
+			}
+		).description.includes("description")
 	);
+});
+
+test("ask tool prompt guidance states the only-when-blocked threshold", () => {
+	const { tool } = registerMockTool();
+	const guidelines = tool.promptGuidelines.join("\n");
+
+	assert.equal(tool.promptGuidelines.length, 2);
+	assert(guidelines.length <= 350);
+	assert(guidelines.includes("only when"));
+	assert(!guidelines.includes("preference-sensitive"));
+	assert(tool.promptSnippet.includes("cannot be settled otherwise"));
 });
 
 test("ask params schema constrains question types", () => {

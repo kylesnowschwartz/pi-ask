@@ -1,6 +1,6 @@
 # Ask tool contract
 
-`ask_user` is a pi-native clarification tool for cases where implementation depends on user preference or missing requirements.
+`ask_user` is a pi-native question tool for a decision that changes the work and that the request, the code, and standing instructions do not settle.
 
 This document defines the stable external behavior. It does not explain internal helper-by-helper implementation.
 
@@ -319,7 +319,7 @@ The fallback message includes normalized pending questions and options so the ca
 
 ## Skill alignment (advisory)
 
-The auto-bundled skill profile at `skills/ask-user/SKILL.md` defines agent-side decision-gate guidance for when to call `ask_user`. It is enabled by default when the package is installed, but can be disabled via `pi config`.
+The auto-bundled skill profile at `skills/ask-user/SKILL.md` defines agent-side guidance for when and how to call `ask_user`. It is enabled by default when the package is installed, but can be disabled via `pi config`.
 
 It is advisory only. If there is any conflict, contract + tests win.
 

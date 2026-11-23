@@ -1,105 +1,78 @@
 ---
 name: ask-user
-description: "Use ask_user as a decision, research, and requirements gate before ambiguous or high-stakes choices."
+description: "Use ask_user only when a decision that changes the work is not settled by the request, the code, or standing instructions; otherwise pick the sensible default, state it, and proceed."
 metadata:
-  short-description: Decision, research, and requirements gate
+  short-description: Ask only when blocked
 ---
 
-# Ask User decision/research gate
+# Ask User when blocked
 
-Use this skill to force explicit user alignment before consequential decisions, preference-sensitive planning, research scoping, or requirements gathering.
+Use `ask_user` only when the request, the code, and the standing instructions do not settle a decision that changes the work. In every other case, choose the sensible default, state it, and proceed.
 
-This skill is for decision control, research scoping, requirements gathering, and preference-sensitive planning, not general chat.
+This skill covers how to ask well once a question is warranted. It is not for general chat.
 
-## Trigger
+## When to ask
 
-Classify the next step as one of:
+Ask when all of these hold:
 
-- `high_stakes`
-- `ambiguous`
-- `both`
-- `clear`
+- the next step depends on a decision the user has not made
+- the request, the code, docs, and standing instructions do not answer it
+- a wrong guess is costly to undo, or changes the result enough that the user would want a say
 
-Use `ask_user` when the next step is ambiguous, preference-sensitive, or high-stakes and the user has not already made the decision explicitly.
+Do not ask when:
 
-Use `ask_user` for any domain where user input changes the plan, recommendation, research direction, output format, criteria, constraints, or next action.
+- a sensible default exists and the choice is cheap to reverse; state the default and continue
+- the question is a trivial formatting or style micro-decision
+- the answer is available from code, docs, or tools you have not read yet
+- standing instructions already tell you to proceed without pausing
 
-Also use `ask_user` when the user asks to gather requirements, interview them, ask questions, scope research, plan work, compare options, or answer a set of open product/design/architecture/research questions. Do not respond with a plain-text questionnaire unless the user explicitly asks for a checklist or written questionnaire.
+When the user explicitly asks you to interview them, gather requirements, or scope research, asking is the task; use `ask_user` rather than a plain-text questionnaire.
 
-### Treat as `high_stakes` when the next step changes:
+## Handshake
 
-- architecture, schema, API contract, deployment, or security posture
-- production-facing behavior in a costly-to-undo way
-- large refactors, migrations, or destructive edits
-- legal, financial, medical, career, hiring, vendor, purchasing, travel, or other costly-to-reverse decisions
-- public-facing claims, sensitive communications, or consequential recommendations
-
-### Treat as `ambiguous` when:
-
-- requirements, goals, constraints, evaluation criteria, or success criteria are missing/conflicting
-- multiple valid options exist and the trade-off is preference-sensitive
-- research scope, audience, budget, timeline, risk tolerance, or output format is unclear
-- you would otherwise make a material assumption
-
-## Handshake (required)
-
-1. Gather evidence first from code/docs/tools.
-2. Summarize neutral context (current state, constraints, trade-offs, recommendation).
-3. Ask one focused `ask_user` decision question, or bundle 2-5 closely related questions when the user is explicitly in requirement-gathering/interview mode.
-4. Restate the user decision and proceed explicitly with it.
+1. Gather evidence first from code, docs, and tools.
+2. Summarize neutral context: current state, constraints, trade-offs, and your recommendation.
+3. Ask one focused `ask_user` decision, or bundle 2-3 closely related unresolved decisions into one call.
+4. Restate the user's decision and proceed with it.
 5. Re-open only for materially new ambiguity.
 
-## Question spew prevention
+## Bundling and follow-ups
 
-Before sending any assistant response that contains 2+ substantive questions for the user, stop and decide whether those questions should be interactive.
+- When a prior answer narrows the branch, bundle the next 2-3 related unresolved decisions into one follow-up call.
+- Use one-at-a-time follow-ups only when the next question depends on the previous answer.
+- When a choice is still needed after an elaboration or follow-up note, ask another structured `ask_user` call rather than plain-text multiple choice.
+- Plain-text questions are fine when the user asked for a written checklist, the question is rhetorical, or exactly one small factual clarification would be heavier as an interactive form.
 
-Use `ask_user` instead of prose when:
+## Question budget
 
-- the questions are meant to collect requirements, goals, constraints, preferences, scope, priorities, criteria, or missing context
-- answers will materially change the next artifact, recommendation, research direction, plan, implementation, architecture, schema, UX, stack choice, or decision criteria
-- the user previously corrected you with phrases like "ask those questions", "ask interactively", or "use ask_user"
-
-Plain-text questions are acceptable only when:
-
-- the user asked for a written checklist/list of open questions
-- the questions are rhetorical or purely explanatory
-- there is exactly one small factual clarification and an interactive flow would be heavier than needed
-
-If there are too many questions, group them into the smallest coherent `ask_user` batches and ask the highest-impact batch first.
-
-## Question budget and escalation
-
-- Max 1 `ask_user` call per decision boundary in normal cases.
-- Max 2 calls for the same boundary if first answer is unclear/cancelled.
+- At most 1 `ask_user` call per decision boundary in normal cases.
+- At most 2 calls for the same boundary if the first answer is unclear or cancelled.
 - Never re-ask the same trade-off without new evidence.
 
-Attempt 2 (only if needed) must be narrower and include:
+The second attempt must be narrower and offer:
 
 - `Proceed with recommended option`
 - `Choose another option`
 - `Stop for now`
 
-After attempt 2:
+After the second attempt:
 
-- for `high_stakes` or `both`: stop as blocked until explicit decision
-- for `ambiguous` only: if user delegates ("your call"), proceed with the most reversible default and state assumptions
+- if the decision is costly to undo, stop as blocked until the user decides
+- otherwise, if the user delegates ("your call"), proceed with the most reversible default and state the assumptions
 
-## ask_user payload quality
+## Payload quality
 
-- Ask one concrete decision at a time.
-- Provide clear, distinct options. Do not add filler options.
-- Choose question type from semantics: `single` means one answer is expected, `multi` means multiple answers could reasonably be selected, and `preview` means options need preview-pane detail with non-empty preview text.
-- Avoid defaulting mechanically; infer from whether options are mutually exclusive, can coexist, or need preview-pane detail.
-- Keep option labels short and outcome-oriented.
-- Include trade-off descriptions when non-obvious.
-- For research/planning, ask about goals, constraints, evaluation criteria, audience, budget, timeline, risk tolerance, and desired output only when they materially affect the result.
+- Ask one concrete decision per question.
+- Provide clear, distinct options with short, outcome-oriented labels. Do not add filler options.
+- Include trade-off descriptions when they are not obvious.
+- Choose the question `type` from the semantics: mutually exclusive answers are `single`, answers that can coexist are `multi`, and options that need preview-pane detail are `preview` with non-empty preview text on every option.
 - Prefer non-`preview` questions when a free-form answer may be useful, since those include an internal `Type your own` option.
+- Ask about goals, constraints, evaluation criteria, audience, budget, timeline, risk tolerance, or output format only when they materially affect the result.
 
 ## Guardrails
 
-- Do not ask before reading available context.
-- Do not use for trivial formatting/style micro-decisions.
-- Do not continue implementation after unclear high-stakes answers.
+- Read available context before asking.
+- Do not continue implementation after an unclear answer to a decision that is costly to undo.
 
 ## Conflict rule
 
