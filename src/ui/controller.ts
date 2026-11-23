@@ -332,9 +332,7 @@ function handleNavigationCommand(
 		case "confirm":
 			clearReviewShortcutPending(controller);
 			clearQuestionTypeChangePending(controller);
-			commitState(controller, confirmCurrentSelection(controller.state), {
-				finish: true,
-			});
+			commitState(controller, confirmCurrentSelection(controller.state));
 			return;
 		case "cancel":
 			clearReviewShortcutPending(controller);
@@ -395,7 +393,7 @@ function handleChangeQuestionType(controller: AskFlowController) {
 		return;
 	}
 	clearQuestionTypeChangePending(controller);
-	commitState(controller, result.state, { finish: true });
+	commitState(controller, result.state);
 }
 
 function openQuestionNote(controller: AskFlowController) {
@@ -432,7 +430,7 @@ function openOptionNote(controller: AskFlowController) {
 function commitState(
 	controller: AskFlowController,
 	nextState: AskState,
-	options: { finish?: boolean; syncSelection?: boolean } = {}
+	options: { syncSelection?: boolean } = {}
 ) {
 	if (nextState.activeTabIndex !== controller.state.activeTabIndex) {
 		clearFooterNotices(controller);
@@ -445,9 +443,7 @@ function commitState(
 	controller.state = maybeAutoSubmitState(controller.state, controller.config);
 	hydrateEditor(controller);
 	refresh(controller);
-	if (options.finish) {
-		maybeFinish(controller);
-	}
+	maybeFinish(controller);
 }
 
 function submitEditor(controller: AskFlowController, value: string) {
@@ -481,11 +477,11 @@ function closeEditor(controller: AskFlowController) {
 
 function handleExitFlow(controller: AskFlowController, nextState: AskState) {
 	if (!shouldRequestDismissConfirmation(controller)) {
-		commitState(controller, nextState, { finish: true });
+		commitState(controller, nextState);
 		return;
 	}
 	if (shouldDiscardAfterConfirmation(!!controller.dismissNotice)) {
-		commitState(controller, nextState, { finish: true });
+		commitState(controller, nextState);
 		return;
 	}
 	controller.dismissNotice = DIRTY_DISMISS_NOTICE;
@@ -559,7 +555,7 @@ function handleReviewShortcutNumber(
 				...controller.state,
 				activeSubmitActionIndex: resolution.actionIndex,
 			};
-	commitState(controller, nextState, { finish: resolution.confirmed });
+	commitState(controller, nextState);
 	return true;
 }
 
@@ -668,7 +664,7 @@ function submitRemoteResponse(
 	if (!resolution.ok) {
 		return resolution;
 	}
-	commitState(controller, resolution.state, { finish: true });
+	commitState(controller, resolution.state);
 	return { ok: true };
 }
 
