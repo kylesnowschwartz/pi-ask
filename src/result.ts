@@ -3,6 +3,7 @@ import {
 	ELABORATED_RESULT_TEXT,
 	SUBMITTED_RESULT_TEXT,
 } from "./constants/text.ts";
+import { formatIdleTimeoutResultLine } from "./idle-timeout.ts";
 import { formatElaborationLines, formatResultLines } from "./result-format.ts";
 import type { AskResult } from "./types.ts";
 
@@ -19,5 +20,8 @@ export function renderResultText(result: AskResult): string {
 	}
 
 	const lines = formatResultLines(result, { mode: "render" });
+	if (result.idleTimeoutMs !== undefined) {
+		lines.push(formatIdleTimeoutResultLine(result.idleTimeoutMs));
+	}
 	return lines.join("\n") || SUBMITTED_RESULT_TEXT;
 }

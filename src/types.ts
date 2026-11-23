@@ -127,6 +127,8 @@ export interface AskResult {
 	continuation?: AskContinuationPayload;
 	elaboration?: AskElaborationPayload;
 	error?: AskValidationError;
+	/** Set when nobody answered and the flow continued after this idle time. */
+	idleTimeoutMs?: number;
 	mode: "submit" | "elaborate";
 	questions: AskQuestionSummary[];
 	title?: string;
@@ -145,6 +147,8 @@ export interface AskState {
 	answers: Record<string, AskStateAnswer>;
 	cancelled: boolean;
 	completed: boolean;
+	/** Set when nobody answered and the flow continued after this idle time. */
+	idleTimeoutMs?: number;
 	mode: "submit" | "elaborate";
 	questions: AskQuestion[];
 	title?: string;

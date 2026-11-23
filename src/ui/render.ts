@@ -13,6 +13,7 @@ import type { QuestionRenderContext, Theme } from "./render-types.ts";
 export function renderAskScreen(args: {
 	config: AskConfig;
 	footerNotice?: string;
+	idleCountdown?: string;
 	reviewShortcutHint?: string;
 	state: AskState;
 	theme: Theme;
@@ -22,6 +23,7 @@ export function renderAskScreen(args: {
 	const {
 		config,
 		footerNotice,
+		idleCountdown,
 		reviewShortcutHint,
 		state,
 		theme,
@@ -48,6 +50,14 @@ export function renderAskScreen(args: {
 		});
 	}
 
-	renderFrameFooter({ config, footerNotice, lines, state, theme, width });
+	renderFrameFooter({
+		config,
+		footerNotice,
+		idleCountdown,
+		lines,
+		state,
+		theme,
+		width,
+	});
 	return lines;
 }

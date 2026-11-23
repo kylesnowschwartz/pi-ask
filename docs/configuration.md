@@ -44,6 +44,7 @@ Unsupported future versions or invalid files are left unchanged and defaults are
     "autoSubmitWhenAnsweredWithoutNotes": false,
     "confirmDismissWhenDirty": true,
     "doublePressReviewShortcuts": true,
+    "idleTimeout": "60s",
     "presentSingleAsMulti": false,
     "showFooterHints": true
   },
@@ -141,6 +142,18 @@ pi auth check --provider openai-codex --model gpt-5.4-mini
 - default: `true`
 - effect: when enabled, review-tab number shortcuts (`1`, `2`, `3`) only trigger after pressing the same key twice
 - the review screen shows an inline hint and keeps the pending shortcut armed until another review shortcut is pressed or the user leaves the tab
+
+### `behaviour.idleTimeout`
+
+- type: `"60s"`, `"5m"`, `"10m"`, or `"never"`
+- default: `"60s"`
+- effect: an `ask_user` tool call that gets no key press for this long continues by itself; it submits the answers selected so far, including typed draft text, and selects nothing for the user
+- result: `details.idleTimeoutMs` holds the idle time, and the result text tells the model that nobody answered, to use its judgment, and that it can ask again later
+- idle time: each key press in the ask flow starts the time again; the time does not run while the settings overlay is open
+- display: the footer shows the remaining time
+- scope: tool calls and forms recovered from an interrupted tool call; `/answer`, `/answer:again`, and `/ask:replay` flows wait without a time limit
+- `"never"` waits without a time limit; an unknown value loads as the default
+- settings UI: `/ask-settings` or `?` in the ask flow cycles the four values, and a change applies to the open ask flow
 
 ### `behaviour.presentSingleAsMulti`
 
@@ -339,6 +352,7 @@ Invalid keymaps include:
     "autoSubmitWhenAnsweredWithoutNotes": true,
     "confirmDismissWhenDirty": true,
     "doublePressReviewShortcuts": true,
+    "idleTimeout": "60s",
     "presentSingleAsMulti": false,
     "showFooterHints": false
   },
@@ -402,6 +416,7 @@ When editing this config for a user:
 - keep `schemaVersion` at `5`
 - preserve `answer.extractionModels` as explicit provider/id pairs
 - keep `answer.extractionRetries` between `0` and `3`
+- set `behaviour.idleTimeout` only to `"60s"`, `"5m"`, `"10m"`, or `"never"`
 - do not assign fixed numeric shortcuts (`1` through `9`) to configurable actions
 - do not create duplicate bindings within a context or between `global` and `main`, `editor`, or `noteEditor`
 - preserve existing `notifications.channels` unless the user asks to change notification targets

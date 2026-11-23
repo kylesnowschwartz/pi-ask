@@ -14,6 +14,7 @@ const savedConfig: AskConfig = {
 		autoSubmitWhenAnsweredWithoutNotes: false,
 		confirmDismissWhenDirty: true,
 		doublePressReviewShortcuts: true,
+		idleTimeout: "60s",
 		presentSingleAsMulti: false,
 		showFooterHints: true,
 	},
@@ -242,4 +243,25 @@ test("settings list closes with configured keys and dispose idempotently", () =>
 	list.handleInput("\u0003");
 	list.dispose();
 	assert.equal(closed, 1);
+});
+
+test("settings list cycles the idle timeout through its values", async () => {
+	const saved: string[] = [];
+	const list = createList({
+		onSave: (config) => {
+			saved.push(config.behaviour.idleTimeout);
+			return Promise.resolve(config);
+		},
+	});
+	assert(list.render(72).join("\n").includes("[60s]"));
+
+	for (let index = 0; index < 3; index++) {
+		list.handleInput("\u001b[B");
+	}
+	for (let index = 0; index < 4; index++) {
+		list.handleInput(" ");
+		await new Promise((resolve) => setImmediate(resolve));
+	}
+
+	assert.deepEqual(saved, ["5m", "10m", "never", "60s"]);
 });

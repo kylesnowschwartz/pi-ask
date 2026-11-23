@@ -2,6 +2,7 @@ import {
 	DEFAULT_ASK_KEYMAPS,
 	normalizeConfiguredKeymaps,
 } from "../constants/keymaps.ts";
+import { DEFAULT_IDLE_TIMEOUT, normalizeIdleTimeout } from "../idle-timeout.ts";
 import type {
 	AskConfig,
 	AskConfigFileV5,
@@ -27,6 +28,7 @@ export const DEFAULT_ASK_CONFIG: AskConfig = {
 		autoSubmitWhenAnsweredWithoutNotes: false,
 		confirmDismissWhenDirty: true,
 		doublePressReviewShortcuts: true,
+		idleTimeout: DEFAULT_IDLE_TIMEOUT,
 		presentSingleAsMulti: false,
 		showFooterHints: true,
 	},
@@ -66,6 +68,7 @@ export function normalizeAskConfig(
 			doublePressReviewShortcuts:
 				config?.behaviour?.doublePressReviewShortcuts ??
 				DEFAULT_ASK_CONFIG.behaviour.doublePressReviewShortcuts,
+			idleTimeout: normalizeIdleTimeout(config?.behaviour?.idleTimeout),
 			showFooterHints:
 				config?.behaviour?.showFooterHints ??
 				DEFAULT_ASK_CONFIG.behaviour.showFooterHints,
@@ -98,6 +101,7 @@ export function toAskConfigFileV5(config: AskConfig): AskConfigFileV5 {
 			confirmDismissWhenDirty: normalized.behaviour.confirmDismissWhenDirty,
 			doublePressReviewShortcuts:
 				normalized.behaviour.doublePressReviewShortcuts,
+			idleTimeout: normalized.behaviour.idleTimeout,
 			presentSingleAsMulti: normalized.behaviour.presentSingleAsMulti,
 			showFooterHints: normalized.behaviour.showFooterHints,
 		},

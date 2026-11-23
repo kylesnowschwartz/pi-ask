@@ -67,6 +67,7 @@ async function reopenPendingAsk(
 	let result: Awaited<ReturnType<typeof runAskFlow>>;
 	try {
 		result = await runAskFlow(ctx, pendingAsk.params, {
+			continueWhenIdle: true,
 			remote: {
 				runtime: remoteAsk,
 				source: "ask:resume",

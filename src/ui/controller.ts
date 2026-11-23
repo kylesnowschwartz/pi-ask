@@ -3,6 +3,13 @@ import { Editor, type EditorTheme } from "@earendil-works/pi-tui";
 import type { AskConfig } from "../config/schema.ts";
 import { getAskConfigStore } from "../config/store.ts";
 import {
+	completeOnIdleTimeout,
+	createIdleTimer,
+	formatIdleCountdown,
+	type IdleTimer,
+	idleTimeoutSeconds,
+} from "../idle-timeout.ts";
+import {
 	createQuestionWaitingNotification,
 	notifyQuestionWaiting,
 } from "../notifications.ts";
@@ -67,6 +74,8 @@ type Keybindings = CustomCallbackArgs[2];
 type Done = (result: AskResult) => void;
 interface AskFlowOptions {
 	allowFreeform?: boolean;
+	/** The model waits on this flow, so it continues by itself after the configured idle time. */
+	continueWhenIdle?: boolean;
 	presentSingleAsMulti?: boolean;
 	remote?: {
 		runtime: RemoteAskRuntime;
@@ -86,10 +95,13 @@ type AskFlowParams = AskParams &
 interface AskFlowController {
 	config: AskConfig;
 	configNotice?: string;
+	continueWhenIdle: boolean;
 	ctx: ExtensionContext;
 	dismissNotice?: string;
+	disposed: boolean;
 	done: Done;
 	editor: Editor;
+	idleTimer?: IdleTimer;
 	pendingQuestionTypeChangeQuestionId?: string;
 	pendingReviewShortcutActionIndex?: number;
 	remoteFlow?: RemoteAskFlowHandle;
@@ -143,7 +155,9 @@ function createAskFlowController(
 	const controller: AskFlowController = {
 		config: params.config,
 		configNotice: params.configNotice,
+		continueWhenIdle: params.flowOptions.continueWhenIdle === true,
 		ctx: params.ctx,
+		disposed: false,
 		dismissNotice: undefined,
 		done,
 		editor: createEditor(tui, theme, params.cwd),
@@ -168,6 +182,9 @@ function createAskFlowController(
 		);
 		refresh(controller);
 		maybeFinish(controller);
+		if (!controller.settingsOpen) {
+			startIdleTimer(controller);
+		}
 	});
 
 	controller.editor.onSubmit = (value) => submitEditor(controller, value);
@@ -176,6 +193,7 @@ function createAskFlowController(
 	notifyCurrentQuestion(controller).catch(() => {
 		// Notification failures are best-effort and must not affect the ask flow.
 	});
+	startIdleTimer(controller);
 
 	return {
 		get focused() {
@@ -189,9 +207,12 @@ function createAskFlowController(
 			controller.editor.invalidate();
 		},
 		handleInput(data: string) {
+			controller.idleTimer?.reset();
 			handleControllerInput(controller, data);
 		},
 		dispose() {
+			controller.disposed = true;
+			stopIdleTimer(controller);
 			controller.remoteFlow?.dispose();
 			controller.unsubscribeConfig();
 		},
@@ -206,6 +227,9 @@ function renderController(
 		config: controller.config,
 		editor: controller.editor,
 		footerNotice: getFooterNotice(controller),
+		idleCountdown: controller.idleTimer
+			? formatIdleCountdown(controller.idleTimer.remainingSeconds())
+			: undefined,
 		reviewShortcutHint: getActiveReviewShortcutHint(controller),
 		state: controller.state,
 		theme: controller.theme,
@@ -548,10 +572,49 @@ function showSettingsModal(controller: AskFlowController) {
 		return;
 	}
 	controller.settingsOpen = true;
+	stopIdleTimer(controller);
 	showAskSettings(controller.ctx).finally(() => {
 		controller.settingsOpen = false;
+		startIdleTimer(controller);
 		refresh(controller);
 	});
+}
+
+function startIdleTimer(controller: AskFlowController) {
+	stopIdleTimer(controller);
+	const idleSeconds = idleTimeoutSeconds(
+		controller.config.behaviour.idleTimeout
+	);
+	if (
+		!controller.continueWhenIdle ||
+		idleSeconds === undefined ||
+		controller.disposed ||
+		controller.state.completed
+	) {
+		return;
+	}
+	controller.idleTimer = createIdleTimer({
+		idleSeconds,
+		onTick: () => refresh(controller),
+		onTimeout: () => continueWithoutAnswer(controller, idleSeconds),
+	});
+}
+
+function stopIdleTimer(controller: AskFlowController) {
+	controller.idleTimer?.dispose();
+	controller.idleTimer = undefined;
+}
+
+function continueWithoutAnswer(
+	controller: AskFlowController,
+	idleSeconds: number
+) {
+	stopIdleTimer(controller);
+	const state = isEditingView(controller.state)
+		? saveEditorState(controller)
+		: controller.state;
+	controller.state = completeOnIdleTimeout(state, idleSeconds);
+	maybeFinish(controller);
 }
 
 function refresh(controller: AskFlowController) {
@@ -573,6 +636,7 @@ async function notifyCurrentQuestion(
 
 function maybeFinish(controller: AskFlowController) {
 	if (controller.state.completed) {
+		stopIdleTimer(controller);
 		const result = toAskResult(controller.state);
 		controller.remoteFlow?.complete(result);
 		controller.done(result);

@@ -1,5 +1,6 @@
 import { type Static, Type } from "typebox";
 import { Compile } from "typebox/compile";
+import type { AskIdleTimeout } from "../idle-timeout.ts";
 
 const AskAnswerModelPreferenceSchema = Type.Object({
 	id: Type.String(),
@@ -118,6 +119,7 @@ export const AskConfigFileV5Schema = Type.Object({
 			autoSubmitWhenAnsweredWithoutNotes: Type.Optional(Type.Boolean()),
 			confirmDismissWhenDirty: Type.Optional(Type.Boolean()),
 			doublePressReviewShortcuts: Type.Optional(Type.Boolean()),
+			idleTimeout: Type.Optional(Type.Unknown()),
 			presentSingleAsMulti: Type.Optional(Type.Boolean()),
 			showFooterHints: Type.Optional(Type.Boolean()),
 		})
@@ -274,6 +276,7 @@ export interface AskConfig {
 		autoSubmitWhenAnsweredWithoutNotes: boolean;
 		confirmDismissWhenDirty: boolean;
 		doublePressReviewShortcuts: boolean;
+		idleTimeout: AskIdleTimeout;
 		presentSingleAsMulti: boolean;
 		showFooterHints: boolean;
 	};

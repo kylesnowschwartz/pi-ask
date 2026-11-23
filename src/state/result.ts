@@ -4,6 +4,7 @@ import {
 	ELABORATION_INSTRUCTION,
 	SUBMITTED_SUMMARY,
 } from "../constants/text.ts";
+import { formatIdleTimeoutInstruction } from "../idle-timeout.ts";
 import { formatElaborationLines, formatResultLines } from "../result-format.ts";
 import type {
 	AskContinuationPayload,
@@ -67,6 +68,9 @@ export function toAskResult(state: AskState): AskResult {
 				: undefined,
 		elaboration:
 			state.mode === "elaborate" ? serializeElaboration(state) : undefined,
+		...(state.idleTimeoutMs === undefined
+			? {}
+			: { idleTimeoutMs: state.idleTimeoutMs }),
 	};
 }
 
@@ -80,6 +84,11 @@ export function summarizeResult(result: AskResult): string {
 	}
 
 	const lines = formatResultLines(result, { mode: "summary" });
+	if (result.idleTimeoutMs !== undefined) {
+		return [...lines, "", formatIdleTimeoutInstruction(result.idleTimeoutMs)]
+			.join("\n")
+			.trim();
+	}
 	return lines.join("\n") || SUBMITTED_SUMMARY;
 }
 

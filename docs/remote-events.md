@@ -117,6 +117,8 @@ type PiAskCompletedEvent = {
 };
 ```
 
+A flow that continued by itself after the idle time has `result.idleTimeoutMs` set. The field is absent when a person or a remote submit resolved the flow.
+
 ## Minimal bridge
 
 ```ts

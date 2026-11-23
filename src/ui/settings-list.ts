@@ -11,6 +11,7 @@ import {
 	matchesBinding,
 	renderSettingsFooterKeymaps,
 } from "../constants/keymaps.ts";
+import { nextIdleTimeout } from "../idle-timeout.ts";
 
 interface Theme {
 	bg(color: string, text: string): string;
@@ -35,7 +36,9 @@ const COMPACT_WIDTH = 40;
 const RESET_CONFIRMATION_MS = 2000;
 
 type SettingSection = "Actions" | "Defaults for future asks" | "Live settings";
-type ToggleSettingKey = keyof AskConfig["behaviour"] | "notifications.enabled";
+type ToggleSettingKey =
+	| Exclude<keyof AskConfig["behaviour"], "idleTimeout">
+	| "notifications.enabled";
 
 interface BaseSetting {
 	description: string;
@@ -53,7 +56,12 @@ interface ToggleSetting extends BaseSetting {
 	type: "toggle";
 }
 
-type Setting = ActionSetting | ToggleSetting;
+interface IdleTimeoutSetting extends BaseSetting {
+	key: "idleTimeout";
+	type: "idleTimeout";
+}
+
+type Setting = ActionSetting | IdleTimeoutSetting | ToggleSetting;
 
 const SETTINGS = [
 	{
@@ -79,6 +87,14 @@ const SETTINGS = [
 		section: "Live settings",
 		label: "Double-press review shortcuts",
 		type: "toggle",
+	},
+	{
+		description:
+			"Idle time before an ask_user form continues by itself. It submits the answers selected so far and tells the model that nobody answered. Does not apply to /answer.",
+		key: "idleTimeout",
+		section: "Live settings",
+		label: "Continue without an answer when idle",
+		type: "idleTimeout",
 	},
 	{
 		description:
@@ -331,6 +347,9 @@ export class AskSettingsList {
 				selected
 			);
 		}
+		if (setting.type === "idleTimeout") {
+			return this.renderValue(this.config.behaviour.idleTimeout, selected);
+		}
 		return this.renderValue(this.getSettingValue(setting.key), selected);
 	}
 
@@ -365,6 +384,17 @@ export class AskSettingsList {
 			return;
 		}
 		this.resetConfirmUntil = 0;
+		if (setting.type === "idleTimeout") {
+			this.saveConfig({
+				...this.config,
+				behaviour: {
+					...this.config.behaviour,
+					idleTimeout: nextIdleTimeout(this.config.behaviour.idleTimeout),
+				},
+			});
+			this.tui.requestRender();
+			return;
+		}
 		this.saveSetting(setting.key, !this.getSettingValue(setting.key));
 		this.tui.requestRender();
 	}
