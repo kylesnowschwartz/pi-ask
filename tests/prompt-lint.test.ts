@@ -49,7 +49,7 @@ const LINT_PI_PACKAGE = resolve(
 	"pi-coding-agent"
 );
 
-// Measured always-on total is 2286 characters; the budget leaves about 10% headroom.
+// The budget leaves headroom above the measured always-on total; raise it only on purpose.
 const ALWAYS_ON_BUDGET = 2500;
 
 const linterAvailable = existsSync(LINT_MODULE) && existsSync(LINT_PI_PACKAGE);
