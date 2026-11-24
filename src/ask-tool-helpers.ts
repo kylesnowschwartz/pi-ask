@@ -13,7 +13,7 @@ import type {
 } from "./types.ts";
 
 export const ASK_TOOL_DESCRIPTION =
-	"Interactive tool that asks the user structured questions. Ask a short structured interview, collect normalized answers, and continue using those answers explicitly instead of guessing. Supports single-select, multi-select, and preview-pane questions. Always include a stable `id` and non-empty `prompt` for every question, plus a machine-readable `value` and visible `label` for every option. Use `preview` only when every option includes `preview` text; descriptions alone are not enough.";
+	"Interactive tool that asks the user structured questions. Ask a short structured interview, collect normalized answers, and continue using those answers explicitly instead of guessing. Supports single-select, multi-select, and preview-pane questions. Always include a stable `id` and non-empty `prompt` for every question, plus a machine-readable `value` and visible `label` for every option.";
 
 export const ASK_TOOL_PROMPT_GUIDELINES = [
 	"Call `ask_user` only when the request, the code, and the instructions do not decide a choice that changes the work. Otherwise choose the default, state it, and continue.",
