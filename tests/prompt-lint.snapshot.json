@@ -1,0 +1,57 @@
+[
+  {
+    "channel": "tool-description",
+    "source": "../src/index.ts",
+    "tool": "ask_user",
+    "alwaysOn": true,
+    "characters": 392,
+    "text": "Interactive tool that asks the user structured questions. Ask a short structured interview, collect normalized answers, and continue using those answers explicitly instead of guessing. Supports single-select, multi-select, and preview-pane questions. Always include a stable `id` and non-empty `prompt` for every question, plus a machine-readable `value` and visible `label` for every option."
+  },
+  {
+    "channel": "parameter-descriptions",
+    "source": "../src/index.ts",
+    "tool": "ask_user",
+    "alwaysOn": true,
+    "characters": 1111,
+    "text": "Optional short title shown above the clarification flow, e.g. README direction\nRequired stable question identifier used as the key in returned answers\nShort tab label, e.g. Goal, Audience, Tone, Scope\nRequired direct question shown to the user; ask about one decision at a time\nQuestion type: `single` means one answer is expected, `multi` means multiple answers could reasonably be selected, and `preview` means options need preview-pane detail. Use `preview` only when every option includes `preview` text; descriptions alone are not enough.\nAdvisory only; marks the question as important but never blocks submission\nRequired machine-readable value returned for this option in the result\nRequired short visible option label shown in the list\nOptional one-line explanation to help the user choose\nOptional preview content shown in the dedicated preview pane for preview questions\nOptional presentation marker for a grounded preference; use the description to explain the reason\nAnswer options; provide clear, distinct choices and do not add filler options\nQuestions to ask in the interactive clarification flow"
+  },
+  {
+    "channel": "prompt-snippet",
+    "source": "../src/index.ts",
+    "tool": "ask_user",
+    "alwaysOn": true,
+    "characters": 40,
+    "text": "Ask the user a short structured question"
+  },
+  {
+    "channel": "prompt-guideline",
+    "source": "../src/index.ts",
+    "tool": "ask_user",
+    "alwaysOn": true,
+    "characters": 169,
+    "text": "Call `ask_user` only when the request, the code, and the instructions do not decide a choice that changes the work. Otherwise choose the default, state it, and continue."
+  },
+  {
+    "channel": "prompt-guideline",
+    "source": "../src/index.ts",
+    "tool": "ask_user",
+    "alwaysOn": true,
+    "characters": 134,
+    "text": "When a choice is still needed after an `ask_user` answer, ask a structured `ask_user` follow-up instead of plain-text multiple choice."
+  },
+  {
+    "channel": "system-prompt-replacement",
+    "source": "../src/index.ts",
+    "alwaysOn": true,
+    "characters": 216,
+    "text": "<pi_ask>\nWhen the user asks to configure, customize, debug, or explain pi-ask settings or keymaps, first read <pi-ask>/docs/configuration.md and follow it as the source of truth before editing config files.\n</pi_ask>"
+  },
+  {
+    "channel": "skill",
+    "source": "../src/index.ts",
+    "name": "ask-user",
+    "alwaysOn": true,
+    "characters": 114,
+    "text": "ask-user: Load before the first `ask_user` call. Covers question shapes, option wording, previews, and follow-ups."
+  }
+]
