@@ -38,13 +38,12 @@ const SNAPSHOT_PATH = resolve(
 );
 const SNAPSHOT_PACKAGE_DIR = "<pi-ask>";
 const UPDATE_SNAPSHOT = process.env.PI_PROMPT_LINT_UPDATE === "1";
-const VIEWER_DIR = resolve(
-	process.env.PI_SYSTEM_PROMPT_VIEWER_DIR ??
-		resolve(PACKAGE_DIR, "..", "pi-system-prompt-viewer")
+const LINT_DIR = resolve(
+	process.env.PI_PROMPT_LINT_DIR ?? resolve(PACKAGE_DIR, "..", "pi-prompt-lint")
 );
-const LINT_MODULE = resolve(VIEWER_DIR, "src", "lint", "index.ts");
-const VIEWER_PI_PACKAGE = resolve(
-	VIEWER_DIR,
+const LINT_MODULE = resolve(LINT_DIR, "src", "lint", "index.ts");
+const LINT_PI_PACKAGE = resolve(
+	LINT_DIR,
 	"node_modules",
 	"@earendil-works",
 	"pi-coding-agent"
@@ -53,9 +52,8 @@ const VIEWER_PI_PACKAGE = resolve(
 // Measured always-on total is 2286 characters; the budget leaves about 10% headroom.
 const ALWAYS_ON_BUDGET = 2500;
 
-const linterAvailable =
-	existsSync(LINT_MODULE) && existsSync(VIEWER_PI_PACKAGE);
-const SKIP_MESSAGE = `prompt linter not resolvable: needs a pi-system-prompt-viewer checkout with installed dependencies at ${VIEWER_DIR} (set PI_SYSTEM_PROMPT_VIEWER_DIR to use another checkout)`;
+const linterAvailable = existsSync(LINT_MODULE) && existsSync(LINT_PI_PACKAGE);
+const SKIP_MESSAGE = `prompt linter not resolvable: needs a pi-prompt-lint checkout (https://github.com/kylesnowschwartz/pi-prompt-lint) with installed dependencies at ${LINT_DIR} (set PI_PROMPT_LINT_DIR to use another checkout)`;
 
 // The system prompt line names this package's absolute docs path, so the
 // snapshot swaps the package directory for a fixed placeholder.
