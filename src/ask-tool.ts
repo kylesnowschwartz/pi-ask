@@ -28,8 +28,7 @@ export function registerAskTool(
 		name: "ask_user",
 		label: "Ask User",
 		description: ASK_TOOL_DESCRIPTION,
-		promptSnippet:
-			"Ask the user a short structured question when a decision that changes the work cannot be settled otherwise",
+		promptSnippet: "Ask the user a short structured question",
 		promptGuidelines: [...ASK_TOOL_PROMPT_GUIDELINES],
 		parameters: AskParamsSchema,
 		prepareArguments: (args) => prepareAskParams(args) as AskParams,

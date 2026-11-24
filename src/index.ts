@@ -14,7 +14,7 @@ const CONFIGURATION_DOC_PATH = resolve(
 	"docs",
 	"configuration.md"
 );
-const PI_ASK_CONFIG_PROMPT = `When the user asks to configure, customize, debug, or explain pi-ask settings or keymaps, first read ${CONFIGURATION_DOC_PATH} and follow it as the source of truth before editing config files.`;
+const PI_ASK_CONFIG_PROMPT = `<pi_ask>\nWhen the user asks to configure, customize, debug, or explain pi-ask settings or keymaps, first read ${CONFIGURATION_DOC_PATH} and follow it as the source of truth before editing config files.\n</pi_ask>`;
 
 export default function askExtension(pi: ExtensionAPI) {
 	resetAskConfigStore();

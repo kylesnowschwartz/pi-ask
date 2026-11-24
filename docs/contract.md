@@ -1,6 +1,6 @@
 # Ask tool contract
 
-`ask_user` is a pi-native question tool for a decision that changes the work and that the request, the code, and standing instructions do not settle.
+`ask_user` is a pi-native question tool for a choice that changes the work and that the request, the code, and the instructions do not decide.
 
 This document defines the stable external behavior. It does not explain internal helper-by-helper implementation.
 

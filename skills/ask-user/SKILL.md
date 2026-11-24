@@ -1,13 +1,13 @@
 ---
 name: ask-user
-description: "Use ask_user only when a decision that changes the work is not settled by the request, the code, or standing instructions; otherwise pick the sensible default, state it, and proceed."
+description: "Load before the first `ask_user` call. Covers question shapes, option wording, previews, and follow-ups."
 metadata:
-  short-description: Ask only when blocked
+  short-description: How to ask well with ask_user
 ---
 
-# Ask User when blocked
+# Asking well with ask_user
 
-Use `ask_user` only when the request, the code, and the standing instructions do not settle a decision that changes the work. In every other case, choose the sensible default, state it, and proceed.
+Call `ask_user` only when the request, the code, and the instructions do not decide a choice that changes the work. Otherwise choose the default, state it, and continue.
 
 This skill covers how to ask well once a question is warranted. It is not for general chat.
 
@@ -16,7 +16,7 @@ This skill covers how to ask well once a question is warranted. It is not for ge
 Ask when all of these hold:
 
 - the next step depends on a decision the user has not made
-- the request, the code, docs, and standing instructions do not answer it
+- the request, the code, docs, and instructions do not decide it
 - a wrong guess is costly to undo, or changes the result enough that the user would want a say
 
 Do not ask when:
@@ -24,7 +24,7 @@ Do not ask when:
 - a sensible default exists and the choice is cheap to reverse; state the default and continue
 - the question is a trivial formatting or style micro-decision
 - the answer is available from code, docs, or tools you have not read yet
-- standing instructions already tell you to proceed without pausing
+- the instructions already tell you to proceed without pausing
 
 When the user explicitly asks you to interview them, gather requirements, or scope research, asking is the task; use `ask_user` rather than a plain-text questionnaire.
 

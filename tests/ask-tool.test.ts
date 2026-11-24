@@ -102,7 +102,7 @@ test("ask tool prompt guidance states the only-when-blocked threshold", () => {
 	assert(guidelines.length <= 350);
 	assert(guidelines.includes("only when"));
 	assert(!guidelines.includes("preference-sensitive"));
-	assert(tool.promptSnippet.includes("cannot be settled otherwise"));
+	assert(tool.promptSnippet === "Ask the user a short structured question");
 });
 
 test("ask params schema constrains question types", () => {

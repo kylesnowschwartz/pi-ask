@@ -13,10 +13,10 @@ import type {
 } from "./types.ts";
 
 export const ASK_TOOL_DESCRIPTION =
-	"Interactive question tool for a decision that changes the work and that the request, the code, and standing instructions do not settle. Ask a short structured interview, collect normalized answers, and continue using those answers explicitly instead of guessing. Supports single-select, multi-select, and preview-pane questions. Always include a stable `id` and non-empty `prompt` for every question, plus a machine-readable `value` and visible `label` for every option. Use `preview` only when every option includes `preview` text; descriptions alone are not enough.";
+	"Interactive tool that asks the user structured questions. Ask a short structured interview, collect normalized answers, and continue using those answers explicitly instead of guessing. Supports single-select, multi-select, and preview-pane questions. Always include a stable `id` and non-empty `prompt` for every question, plus a machine-readable `value` and visible `label` for every option. Use `preview` only when every option includes `preview` text; descriptions alone are not enough.";
 
 export const ASK_TOOL_PROMPT_GUIDELINES = [
-	"Call `ask_user` only when the request, the code, and the standing instructions do not settle a decision that changes the work; otherwise choose the sensible default, state it, and proceed.",
+	"Call `ask_user` only when the request, the code, and the instructions do not decide a choice that changes the work. Otherwise choose the default, state it, and continue.",
 	"When a choice is still needed after an `ask_user` answer, ask a structured `ask_user` follow-up instead of plain-text multiple choice.",
 ] as const;
 
